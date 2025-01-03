@@ -16,12 +16,10 @@ class Logout  extends Component
     public function render()
     {
         return <<<'HTML'
-            <button wire:click="logout"
-                class="flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-neutral-600 underline-offset-2 hover:bg-black/5 hover:text-neutral-900 focus-visible:underline focus:outline-none dark:text-neutral-300 dark:hover:bg-white/5 dark:hover:text-white"
-                role="menuitem">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Sign Out</span>
-            </button>
+            <a wire:click="logout" wire:navigate
+                class="cursor-pointer flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-neutral-600 underline-offset-2 hover:bg-black/5 hover:text-neutral-900 focus-visible:underline focus:outline-none dark:text-neutral-300 dark:hover:bg-white/5 dark:hover:text-white">
+                <x-heroicon-o-arrow-left-start-on-rectangle class="w-5 h-5 text-gray-500 dark:text-neutral-300" /> Sign Out
+            </a>
         HTML;
     }
 }
