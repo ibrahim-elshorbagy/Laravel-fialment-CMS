@@ -69,7 +69,7 @@
                             aria-controls="userMenu">
 
                         @auth
-                            <img src="{{ Storage::url(Auth::user()?->avatar_url) }}" alt="User Profile" class="object-cover rounded-full size-10" />
+                       <x-filament::avatar :src="Auth::user()?->avatar_url ? Storage::url(Auth::user()->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()?->name)" :alt="Auth::user()?->name" />
                         @endauth
 
                         @guest
@@ -152,8 +152,9 @@
                     @auth
                     <li class="mb-4 border-none">
                         <div class="flex items-center gap-2 py-2">
-                            <img src="{{ Storage::url(Auth::user()?->avatar_url) }}" alt="User Profile"
-                                class="object-cover rounded-full size-12" />
+                        <x-filament::avatar
+                        :src="Auth::user()?->avatar_url ? Storage::url(Auth::user()->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()?->name)"
+                        :alt="Auth::user()?->name" />
 
                             <div>
                                 <span class="font-medium text-neutral-900 dark:text-white">{{Auth::user()?->name}}</span>
@@ -199,7 +200,7 @@
                 </ul>
             </nav>
             <!-- main content  -->
-            <div id="main-content" class="p-4">
+            <div id="main-content">
                 <div class="overflow-y-auto">
                     {{ $slot }}
                 </div>
@@ -213,6 +214,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @livewireScripts
+    @livewireScriptConfig
 </body>
 
 </html>
