@@ -1,4 +1,4 @@
-<section class="flex flex-col justify-center min-h-screen px-4 py-5 mx-auto sm:px-6">
+<section class="flex flex-col justify-center min-h-screen mx-auto sm:px-6">
     <!-- Header Section -->
     <div class="flex flex-wrap items-center justify-between mb-8">
         <h2 class="mr-10 text-4xl font-bold leading-none md:text-5xl">
@@ -18,7 +18,7 @@
             <div class="flex flex-col h-full overflow-hidden bg-white border border-gray-400 group">
                 <!-- Article Image -->
                 <img src="{{ Storage::url($article?->image?->path) }}" alt="{{ $article?->image?->alt_text }}"
-                    class="object-cover object-center w-full h-[24rem] duration-700 ease-out transition group-hover:scale-105" />
+                    class="object-cover object-center w-full h-[12rem] md:h-[24rem] duration-700 ease-out transition group-hover:scale-105" />
 
                 <!-- Card Content -->
                 <div class="flex flex-col flex-grow px-4 py-6">

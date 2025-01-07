@@ -52,8 +52,8 @@
                     <li><a href="#"
                             class="font-bold text-black underline-offset-2 hover:text-black focus:outline-none focus:underline dark:text-white dark:hover:text-white"
                             aria-current="page">Products</a></li>
-                    <li><a href="#"
-                            class="font-medium text-neutral-600 underline-offset-2 hover:text-black focus:outline-none focus:underline dark:text-neutral-300 dark:hover:text-white">Pricing</a>
+                    <li><a href="{{ route('plans') }}" wire:navigate
+                            class="font-medium text-neutral-600 underline-offset-2 hover:text-black focus:outline-none focus:underline dark:text-neutral-300 dark:hover:text-white">Plans</a>
                     </li>
                     <li><a href="#"
                             class="font-medium text-neutral-600 underline-offset-2 hover:text-black focus:outline-none focus:underline dark:text-neutral-300 dark:hover:text-white">Blog</a>
@@ -165,8 +165,8 @@
                     @endauth
                     <li class="p-2"><a href="#" class="w-full text-lg font-bold text-black focus:underline dark:text-white"
                             aria-current="page">Products</a></li>
-                    <li class="p-2"><a href="#"
-                            class="w-full text-lg font-medium text-neutral-600 focus:underline dark:text-neutral-300">Pricing</a>
+                    <li class="p-2"><a href="{{ route('plans') }}" wire:navigate
+                            class="w-full text-lg font-medium text-neutral-600 focus:underline dark:text-neutral-300">Plans</a>
                     </li>
                     <li class="p-2"><a href="#"
                             class="w-full text-lg font-medium text-neutral-600 focus:underline dark:text-neutral-300">Blog</a></li>
