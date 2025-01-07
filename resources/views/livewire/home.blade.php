@@ -1,4 +1,4 @@
-<div class="space-y-12">
+<div >
     <!-- Hero Section -->
     <section
         class="flex items-center justify-center text-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-neutral-800 dark:to-neutral-900 h-lvh">
@@ -26,7 +26,7 @@
     </section>
 
     <!-- Features Section -->
-    <section class="bg-white dark:bg-neutral-900" id="features">
+    <section class="my-16" id="features">
         <div class="container px-4 mx-auto">
             <h2 class="mb-12 text-3xl font-bold text-center text-neutral-800 dark:text-neutral-100">
                 Powerful Features for Modern Content Management
@@ -83,9 +83,9 @@
             </div>
         </div>
     </section>
-
+{{-- 
     <!-- Statistics Section -->
-    <section class="py-16 bg-neutral-50 dark:bg-neutral-800">
+    <section class="py-16 my-16 bg-neutral-50 dark:bg-neutral-800">
         <div class="container px-4 mx-auto">
             <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
                 <div class="text-center">
@@ -106,10 +106,10 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Latest Articles Section -->
-    <section class="bg-white dark:bg-neutral-900">
+    <section class="py-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-neutral-800 dark:to-neutral-900">
         <div class="container px-4 mx-auto">
                 <livewire:blog.article.article-card />
         </div>

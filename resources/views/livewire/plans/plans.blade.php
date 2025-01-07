@@ -1,6 +1,6 @@
 <div class="space-y-16">
     <!-- Hero Section -->
-    <section class="py-20 bg-gradient-to-b from-blue-50 to-white dark:from-neutral-800 dark:to-neutral-900">
+    <section class="py-20 mt-16 bg-gradient-to-b from-blue-50 to-white dark:from-neutral-800 dark:to-neutral-900">
         <div class="container px-4 mx-auto text-center">
             <h1 class="mb-4 text-4xl font-bold md:text-5xl text-neutral-800 dark:text-neutral-100">
                 Choose Your Perfect Plan

@@ -6,10 +6,13 @@ use App\Filament\Resources\Blog\ArticleResource\Pages;
 use App\Filament\Resources\Blog\ArticleResource\RelationManagers;
 use App\Forms\Components\slug;
 use App\Models\Blog\Article;
+use App\Models\Classification\Category;
+use App\Models\Classification\Tag;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -69,6 +72,18 @@ class ArticleResource extends Resource
                                     ->required()
                                     ->maxLength(160)
                                     ->columnSpanFull(),
+                                    
+                                select::make('categories')
+                                    ->relationship('categories', 'title',fn($query)=> $query->limit(10))
+                                    ->preload()
+                                    ->label('Categories'),
+
+                                select::make('tags')
+                                    ->multiple()
+                                    ->relationship('tags', 'title',fn($query)=> $query->limit(10))
+                                    ->preload()
+                                    ->label('Tags'),
+
                             ])
                             ->columns(2),
 
@@ -108,7 +123,7 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                CuratorColumn::make('media_id')->size(100),
+                CuratorColumn::make('media_id')->size(100)->label('Image'),
                 TextColumn::make('title')->searchable(),
                 // TextColumn::make('brief'),
 

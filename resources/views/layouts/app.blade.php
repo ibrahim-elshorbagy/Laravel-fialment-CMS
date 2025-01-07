@@ -41,7 +41,7 @@
             <!-- top navbar  -->
 
             <nav x-data="{ mobileMenuIsOpen: false }" @click.away="mobileMenuIsOpen = false"
-                class="flex items-center justify-between px-6 py-4 border-b bg-neutral-50 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900"
+                class="fixed z-50 flex items-center justify-between w-full px-6 py-4 border-b bg-neutral-50 border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900"
                 >
                 <!-- Logo -->
                 <a href="{{ route('welcome') }}" class="w-12 text-neutral-600 dark:text-neutral-300" wire:navigate>
@@ -59,6 +59,7 @@
                             class="font-medium text-neutral-600 underline-offset-2 hover:text-black focus:outline-none focus:underline dark:text-neutral-300 dark:hover:text-white">Blog</a>
                     </li>
                     <!-- User Pic -->
+                    <x-theme-toggle />
                     <li x-data="{ userDropDownIsOpen: false, openWithKeyboard: false }"
                         @keydown.esc.window="userDropDownIsOpen = false, openWithKeyboard = false"
                         class="relative flex items-center">
