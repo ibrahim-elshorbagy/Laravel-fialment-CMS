@@ -12,7 +12,7 @@ class ArticleCard extends Component
     #[Computed()]
     public function articles()
     {
-        return  ArticleModel::limit(6)->get();
+        return  ArticleModel::query()->where('is_published', 1)->limit(6)->get();
     }
     public function render()
     {

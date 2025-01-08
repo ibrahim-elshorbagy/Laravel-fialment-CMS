@@ -1,4 +1,4 @@
-<article class="flex flex-col gap-4 px-2 py-6 m-5 mx-auto m sm:gap-8 sm:py-12 max-w-7xl">
+<article class="flex flex-col gap-4 px-2 py-6 m-5 mx-auto mt-16 m sm:gap-8 sm:py-12 max-w-7xl">
     <!-- Hero Section with Image -->
     <section class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-neutral-800 dark:to-neutral-900">
         @if ($article->media_id)

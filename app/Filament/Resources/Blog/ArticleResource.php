@@ -6,8 +6,7 @@ use App\Filament\Resources\Blog\ArticleResource\Pages;
 use App\Filament\Resources\Blog\ArticleResource\RelationManagers;
 use App\Forms\Components\slug;
 use App\Models\Blog\Article;
-use App\Models\Classification\Category;
-use App\Models\Classification\Tag;
+use App\Models\Classification\tag;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Forms;
@@ -29,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
 
 
@@ -72,7 +72,7 @@ class ArticleResource extends Resource
                                     ->required()
                                     ->maxLength(160)
                                     ->columnSpanFull(),
-                                    
+
                                 select::make('categories')
                                     ->relationship('categories', 'title',fn($query)=> $query->limit(10))
                                     ->preload()
@@ -129,7 +129,13 @@ class ArticleResource extends Resource
 
                 ])
             ->filters([
-                //
+                SelectFilter::make('Category')->relationship('categories', 'title',fn($query)=> $query->limit(10))
+                ->preload()
+                ->searchable(),
+                SelectFilter::make('Tag')->relationship('tags', 'title',fn($query)=> $query->limit(10))
+                ->preload()
+                ->multiple()
+                ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

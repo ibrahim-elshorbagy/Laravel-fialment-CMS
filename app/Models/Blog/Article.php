@@ -7,11 +7,13 @@ use App\Models\Classification\Tag ;
 use App\Models\User;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Model;
+
 use WireComments\Traits\Commentable;
 
 class Article extends Model
 {
     use Commentable;
+
     protected $guarded = ['id'];
 
     public function getRouteKeyName()
