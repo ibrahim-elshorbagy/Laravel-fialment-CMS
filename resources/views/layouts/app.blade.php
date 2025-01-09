@@ -8,21 +8,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @if(Route::currentRouteName() == 'article.show')
-        {!! seo()->for(Route::current()->parameter('article')) !!}
-
         @php
-        $article = Route::current()->parameter('article');
-        $keywords = $article->seo?->keywords ? json_decode($article->seo->keywords, true) : null;
+
+        $seoData = null;
+        $keywords = null;
+
+        if (Route::currentRouteName() == 'article.show') {
+            $article = Route::current()->parameter('article');
+            $seoData = $article;
+            $keywords = $article->seo?->keywords ? json_decode($article->seo->keywords, true) : null;
+        } elseif (isset($SEOData)) {
+            $seoData = $SEOData;
+            $keywords = $SEOData->keywords ?? null;
+        }
         @endphp
+
+        {!! $seoData ? seo()->for($seoData) : seo() !!}
 
         @if($keywords)
             <meta name="keywords" content="{{ is_array($keywords) ? implode(', ', $keywords) : $keywords }}">
         @endif
-
-    @else
-    {!! seo() !!}
-    @endif
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

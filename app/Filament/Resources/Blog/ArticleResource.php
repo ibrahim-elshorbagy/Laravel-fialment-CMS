@@ -36,7 +36,7 @@ use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
 use App\Forms\Components\CustomSEO;
-
+use Filament\Forms\Components\Grid;
 
 class ArticleResource extends Resource
 {
@@ -48,23 +48,35 @@ class ArticleResource extends Resource
     {
            return $form
                     ->schema([
-                        Section::make('General Information')
+                        Section::make('Content')
+                            ->description('Manage the content of this article')
+
                             ->schema([
-                                TextInput::make('title')->required()->maxLength(150)->minLength(1)->live(onBlur:true)
-                                ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
-                                    if (($get('slug') ?? '') !== Str::slug($old)) {
-                                        return;
-                                    }
+                                    TextInput::make('title')
+                                        ->required()
+                                        ->maxLength(150)
+                                        ->minLength(1)
+                                        ->live(onBlur:true)
+                                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                            if (!$state) return;
 
-                                    $set('slug', Str::slug($state));
-                                }),
+                                            $slug = preg_replace('/\s+/u', '-', trim($state));
+                                            $slug = str_replace("/", "", $slug);
+                                            $slug = str_replace("?", "", $slug);
+                                            $slug = mb_strtolower($slug, 'UTF-8');
 
-                                TextInput::make('slug')->required()->unique(ignoreRecord:true)
-                                ->maxLength(150)
-                                ->minLength(1)
-                                ->disabled()
-                                ->dehydrated()
-                                ->required(),
+                                            $set('slug', $slug);
+                                        })->prefixIcon('heroicon-m-document-text'),
+
+                                    TextInput::make('slug')
+                                        ->required()
+                                        ->unique(ignoreRecord: true)
+                                        ->maxLength(150)
+                                        ->minLength(1)
+                                        ->disabled()
+                                        ->prefixIcon('heroicon-m-link')
+                                        ->helperText('This will be the URL of your content')
+                                        ->dehydrated(),
 
                                 RichEditor::make('content')
                                     ->label('Content')
@@ -93,47 +105,72 @@ class ArticleResource extends Resource
                             ])
                             ->columns(2),
 
-                        Section::make('Media & Author')
-                            ->schema([
-                                CuratorPicker::make('media_id')
-                                    ->label('Featured Image')
-                                    ->nullable(),
+                            Grid::make()->schema([
+                                // Publishing Status Card
+                                Section::make()
+                                    ->schema([
+                                        Grid::make(2)
+                                            ->schema([
+                                                Toggle::make('is_published')
+                                                    ->label('Publishing Status')
+                                                    ->default(true)
+                                                    ->inline()
+                                                    ->onIcon('heroicon-m-check-circle')
+                                                    ->offIcon('heroicon-m-x-circle'),
 
-                              Select::make('user_id')
-                                        ->label('Author')
-                                        ->relationship('user', 'name', fn ($query) => $query->limit(10))
-                                        ->placeholder('Select an author')
-                                        ->preload()
-                                        ->searchable()
-                                        ->required()
-                                        ->reactive()
-                                        ->afterStateUpdated(function ($state, callable $set) {
-                                            if ($state) {
-                                                $userName = \App\Models\User::find($state)->name;
-                                                $set('seo.author', $userName);
-                                            } else {
-                                                $set('seo.author', null);
-                                            }
-                                        }),
+                                                DateTimePicker::make('published_at')
+                                                    ->label('Publish Date')
+                                                    ->displayFormat('M d, Y H:i')
+                                                    ->timezone('UTC')
+                                                    ->prefixIcon('heroicon-m-calendar'),
 
-                            ])
-                            ->columns(2),
+                                                Select::make('user_id')
+                                                    ->label('Author')
+                                                    ->relationship('user', 'name', fn ($query) => $query->limit(10))
+                                                    ->placeholder('Select an author')
+                                                    ->preload()
+                                                    ->searchable()
+                                                    ->required()
+                                                    ->reactive()
+                                                    ->prefixIcon('heroicon-m-user')
+                                                    ->afterStateUpdated(function ($state, callable $set) {
+                                                        if ($state) {
+                                                            $userName = \App\Models\User::find($state)->name;
+                                                            $set('seo.author', $userName);
+                                                        } else {
+                                                            $set('seo.author', null);
+                                                        }
+                                                    })
+                                                    ->columnSpanFull(),
+                                            ])
+                                    ])
+                                    ->columnSpan(['lg' => 1, 'sm' => 2])
+                                    ->heading('Publishing Information')
+                                    ->description('Control when this content goes live'),
 
-                        Section::make('Publishing')
-                            ->schema([
-                                Toggle::make('is_published')
-                                    ->label('Published')
-                                    ->default(true),
+                                // Media & Author Card
+                                Section::make()
+                                    ->schema([
+                                        Grid::make(1)
+                                            ->schema([
+                                                CuratorPicker::make('media_id')
+                                                    ->label('Featured Image')
+                                                    ->helperText('Select a featured image for this content')
+                                                    ->columnSpanFull(),
 
-                                DateTimePicker::make('published_at')
-                                    ->label('Publish Date'),
-                            ])
-                            ->columns(2),
+
+                                            ])
+                                    ])
+                                    ->columnSpan(['lg' => 1, 'sm' => 2])
+                                    ->heading('Media & Authorship')
+                                    ->description('Manage content media and attribution')
+                            ])->columns(2),
 
                         Section::make('SEO')
                         ->schema([
                             CustomSEO::make(['title', 'author', 'description', 'keywords']),
-                        ])
+                        ])->description('Enhance SEO visibility'),
+
 
                     ]);
 

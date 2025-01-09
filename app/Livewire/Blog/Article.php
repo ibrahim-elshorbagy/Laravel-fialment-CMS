@@ -4,6 +4,7 @@ namespace App\Livewire\Blog;
 
 use App\Models\Blog\Article as ArticleModel;
 use Livewire\Component;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class Article extends Component
 {
