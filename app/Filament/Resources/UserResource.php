@@ -6,6 +6,8 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,7 +25,24 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Section::make('User Information')
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->required()
+                            ->email()
+                            ->unique(ignoreRecord: true),
+
+                        TextInput::make('password')
+                            ->label('Password')
+                            ->password()
+                            ->required()
+                    ])->columns(2),
             ]);
     }
 

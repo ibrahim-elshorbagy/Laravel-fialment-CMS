@@ -7,14 +7,26 @@ use App\Models\Classification\Tag ;
 use App\Models\User;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\Storage;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 use WireComments\Traits\Commentable;
 
 class Article extends Model
 {
+    protected $guarded = ['id'];
+
+    use HasSEO;
     use Commentable;
 
-    protected $guarded = ['id'];
+    public function getDynamicSEOData(): SEOData
+    {
+        return new SEOData(
+            image: $this->image ? url(Storage::url($this->image->path)) : null,
+        );
+    }
+
+
 
     public function getRouteKeyName()
     {

@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
                 'content' => $faker->paragraphs(3, true),
                 'brief' => $faker->paragraph(1),
                 'media_id' => null,
+                'is_published' => $i % 2 == 0 ? true : false
             ]);
         }
 

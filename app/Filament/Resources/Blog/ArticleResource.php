@@ -35,6 +35,8 @@ use Filament\Forms\Set;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
+use App\Forms\Components\CustomSEO;
+
 
 class ArticleResource extends Resource
 {
@@ -97,13 +99,23 @@ class ArticleResource extends Resource
                                     ->label('Featured Image')
                                     ->nullable(),
 
-                                Select::make('user_id')
-                                    ->label('Author')
-                                    ->relationship('user', 'name',fn ($query)=> $query->limit(10) )
-                                    ->placeholder('Select an author')
-                                    ->preload()
-                                    ->searchable()
-                                    ->required(),
+                              Select::make('user_id')
+                                        ->label('Author')
+                                        ->relationship('user', 'name', fn ($query) => $query->limit(10))
+                                        ->placeholder('Select an author')
+                                        ->preload()
+                                        ->searchable()
+                                        ->required()
+                                        ->reactive()
+                                        ->afterStateUpdated(function ($state, callable $set) {
+                                            if ($state) {
+                                                $userName = \App\Models\User::find($state)->name;
+                                                $set('seo.author', $userName);
+                                            } else {
+                                                $set('seo.author', null);
+                                            }
+                                        }),
+
                             ])
                             ->columns(2),
 
@@ -118,11 +130,10 @@ class ArticleResource extends Resource
                             ])
                             ->columns(2),
 
-                    //     Section::make('SEO')
-                    // ->schema([
-                    //     SEO::make(['title', 'author', 'description', 'keywords']),
-
-                    // ])
+                        Section::make('SEO')
+                        ->schema([
+                            CustomSEO::make(['title', 'author', 'description', 'keywords']),
+                        ])
 
                     ]);
 
