@@ -7,10 +7,14 @@ use App\Filament\Resources\Blog\ArticleResource\RelationManagers;
 use App\Forms\Components\slug;
 use App\Models\Blog\Article;
 use App\Models\Classification\tag;
+use App\Models\User;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
+use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -28,9 +32,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
-
 
 class ArticleResource extends Resource
 {
@@ -110,11 +114,16 @@ class ArticleResource extends Resource
                                     ->default(true),
 
                                 DateTimePicker::make('published_at')
-                                    ->label('Publish Date')
-                                    ->default(now())
-                                    ->required(),
+                                    ->label('Publish Date'),
                             ])
                             ->columns(2),
+
+                    //     Section::make('SEO')
+                    // ->schema([
+                    //     SEO::make(['title', 'author', 'description', 'keywords']),
+
+                    // ])
+
                     ]);
 
     }
@@ -124,7 +133,22 @@ class ArticleResource extends Resource
         return $table
             ->columns([
                 CuratorColumn::make('media_id')->size(100)->label('Image'),
-                TextColumn::make('title')->searchable(),
+                TextColumn::make('title')->searchable()
+                ->sortable(),
+                TextColumn::make('categories.title')->searchable()->label('Category')->sortable(),
+                CheckboxColumn::make('is_published')
+                    ->label('Published')
+                    ->afterStateUpdated(function ($state, $record) {
+                        if ($state) {
+                            // If checked, set published_at to the current date and time
+                            $record->published_at = Carbon::now();
+                        } else {
+                            // If unchecked, set published_at to null
+                            $record->published_at = null;
+                        }
+                        $record->save(); // Save the record
+                    }),
+                TextColumn::make('published_at')->label('Published At')->dateTime()->sortable()->searchable(),
                 // TextColumn::make('brief'),
 
                 ])

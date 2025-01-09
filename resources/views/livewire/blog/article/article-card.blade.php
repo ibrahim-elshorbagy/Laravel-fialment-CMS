@@ -41,7 +41,7 @@
 
                     <div class="flex items-center mt-auto gap-x-3">
                         <x-filament::avatar
-                            :src="$article?->user?->avatar_url ? Storage::url($article?->user?->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()?->name)"
+                            :src="$article?->user?->avatar_url ? Storage::url($article?->user?->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode($article?->user?->name)"
                             :alt="Auth::user()?->name" />
                         <div>
                             <h5 class="text-sm text-neutral-800 dark:text-neutral-200">By {{ $article?->user?->name }}

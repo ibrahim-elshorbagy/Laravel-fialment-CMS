@@ -6,6 +6,7 @@ use App\Livewire\Blog\Article;
 use App\Livewire\Home;
 use App\Livewire\Plans\Plans;
 
+Route::redirect('/', '/Home');
 Route::get('/Home',Home::class)->name('welcome');
 Route::get('/plans',Plans::class)->name('plans');
 
