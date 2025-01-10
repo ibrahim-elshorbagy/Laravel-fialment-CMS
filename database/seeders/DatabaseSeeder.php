@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Blog\Article;
+use App\Models\Article;
 
 use App\Models\User;
 use Awcodes\Curator\Models\Media;

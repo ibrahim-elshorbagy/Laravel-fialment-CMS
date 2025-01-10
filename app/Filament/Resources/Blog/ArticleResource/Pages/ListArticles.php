@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Blog\ArticleResource\Pages;
 
 use App\Filament\Resources\Blog\ArticleResource;
-use App\Models\Blog\Article;
+use App\Models\Article;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models\Blog;
+namespace App\Models;
 
-use App\Models\Classification\Category;
-use App\Models\Classification\Tag ;
+use App\Models\Tag ;
 use App\Models\User;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Model;

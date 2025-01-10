@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Blog;
 use App\Filament\Resources\Blog\ArticleResource\Pages;
 use App\Filament\Resources\Blog\ArticleResource\RelationManagers;
 use App\Forms\Components\slug;
-use App\Models\Blog\Article;
-use App\Models\Classification\tag;
+use App\Models\Article;
+use App\Models\Tag;
 use App\Models\User;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
@@ -46,7 +46,7 @@ class ArticleResource extends Resource
 
     protected static ?string $slug = 'blog/article';
 
-    
+
     public static function form(Form $form): Form
     {
            return $form

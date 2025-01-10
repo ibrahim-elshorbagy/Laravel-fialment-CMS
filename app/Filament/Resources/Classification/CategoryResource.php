@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Classification;
 
 use App\Filament\Resources\Classification\CategoryResource\Pages;
 use App\Filament\Resources\Classification\CategoryResource\RelationManagers;
-use App\Models\Classification\Category;
+use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

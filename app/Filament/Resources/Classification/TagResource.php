@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Classification;
 
 use App\Filament\Resources\Classification\TagResource\Pages;
 use App\Filament\Resources\Classification\TagResource\RelationManagers;
-use App\Models\Classification\Tag;
+use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

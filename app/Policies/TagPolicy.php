@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Blog;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Blog\Article;
+use App\Models\Tag;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ArticlePolicy
+class TagPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class ArticlePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_blog::article');
+        return $user->can('view_any_classification::tag');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Article $article): bool
+    public function view(User $user, Tag $tag): bool
     {
-        return $user->can('view_blog::article');
+        return $user->can('view_classification::tag');
     }
 
     /**
@@ -31,23 +31,23 @@ class ArticlePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_blog::article');
+        return $user->can('create_classification::tag');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Article $article): bool
+    public function update(User $user, Tag $tag): bool
     {
-        return $user->can('update_blog::article');
+        return $user->can('update_classification::tag');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Article $article): bool
+    public function delete(User $user, Tag $tag): bool
     {
-        return $user->can('delete_blog::article');
+        return $user->can('delete_classification::tag');
     }
 
     /**
@@ -55,15 +55,15 @@ class ArticlePolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_blog::article');
+        return $user->can('delete_any_classification::tag');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Article $article): bool
+    public function forceDelete(User $user, Tag $tag): bool
     {
-        return $user->can('force_delete_blog::article');
+        return $user->can('force_delete_classification::tag');
     }
 
     /**
@@ -71,15 +71,15 @@ class ArticlePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_blog::article');
+        return $user->can('force_delete_any_classification::tag');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Article $article): bool
+    public function restore(User $user, Tag $tag): bool
     {
-        return $user->can('restore_blog::article');
+        return $user->can('restore_classification::tag');
     }
 
     /**
@@ -87,15 +87,15 @@ class ArticlePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_blog::article');
+        return $user->can('restore_any_classification::tag');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Article $article): bool
+    public function replicate(User $user, Tag $tag): bool
     {
-        return $user->can('replicate_blog::article');
+        return $user->can('replicate_classification::tag');
     }
 
     /**
@@ -103,6 +103,6 @@ class ArticlePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_blog::article');
+        return $user->can('reorder_classification::tag');
     }
 }
