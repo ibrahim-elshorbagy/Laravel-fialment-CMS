@@ -44,6 +44,9 @@ class ArticleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $slug = 'blog/article';
+
+    
     public static function form(Form $form): Form
     {
            return $form
@@ -235,3 +238,4 @@ class ArticleResource extends Resource
         ];
     }
 }
+

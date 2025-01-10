@@ -79,7 +79,9 @@ class DashboardPanelProvider extends PanelProvider
                     ->setIcon('heroicon-o-user')
                     ->setSort(1)
                     ->shouldShowDeleteAccountForm(false)
-                    ->shouldShowBrowserSessionsForm()
+                    ->shouldShowBrowserSessionsForm(),
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+
 
 
             ])
@@ -90,6 +92,7 @@ class DashboardPanelProvider extends PanelProvider
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon(icon: 'heroicon-m-user-circle'),
             ]);
-;
+
     }
 }
+
