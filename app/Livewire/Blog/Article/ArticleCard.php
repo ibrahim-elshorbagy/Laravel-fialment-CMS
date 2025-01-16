@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Blog\Article;
 
-use App\Models\Blog\Article as ArticleModel;
+use App\Models\Article as ArticleModel;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 

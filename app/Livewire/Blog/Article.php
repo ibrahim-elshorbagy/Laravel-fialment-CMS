@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Blog;
 
-use App\Models\Blog\Article as ArticleModel;
+use App\Models\Article as ArticleModel;
 use Livewire\Component;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
