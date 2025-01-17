@@ -38,6 +38,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Pboivin\FilamentPeek\Tables\Actions\ListPreviewAction;
 
 class ArticleResource extends Resource
 {
@@ -229,6 +230,8 @@ class ArticleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                ListPreviewAction::make(),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -20,6 +20,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
+use Pboivin\FilamentPeek\FilamentPeekPlugin;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -72,6 +73,8 @@ class DashboardPanelProvider extends PanelProvider
                     ->shouldShowDeleteAccountForm(false)
                     ->shouldShowBrowserSessionsForm(),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                FilamentPeekPlugin::make(),
+
 
 
 

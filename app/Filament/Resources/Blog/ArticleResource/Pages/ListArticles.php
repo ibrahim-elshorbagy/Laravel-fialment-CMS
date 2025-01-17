@@ -8,9 +8,12 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use Pboivin\FilamentPeek\Pages\Concerns\HasPreviewModal;
 
 class ListArticles extends ListRecords
 {
+        use HasPreviewModal;
+
     protected static string $resource = ArticleResource::class;
 
     protected function getHeaderActions(): array
@@ -35,5 +38,16 @@ class ListArticles extends ListRecords
 
             ];
 
+    }
+
+
+    protected function getPreviewModalView(): ?string
+    {
+        return 'livewire.blog.article.article-preview';
+    }
+
+    protected function getPreviewModalDataRecordKey(): ?string
+    {
+        return 'article';
     }
 }
