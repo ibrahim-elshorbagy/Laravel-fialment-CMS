@@ -39,8 +39,10 @@ use Filament\Forms\Components\Grid;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Pboivin\FilamentPeek\Tables\Actions\ListPreviewAction;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Tables\Columns\ToggleColumn;
 
-class ArticleResource extends Resource
+class ArticleResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Article::class;
 
@@ -116,6 +118,8 @@ class ArticleResource extends Resource
                             ->schema([
                                 Toggle::make('is_published')
                                     ->label('Published')
+                                    ->onIcon('heroicon-m-check-circle')
+                                    ->offIcon('heroicon-m-x-circle')
                                     ->default(true),
 
                                 DateTimePicker::make('published_at')
@@ -203,19 +207,30 @@ class ArticleResource extends Resource
                 TextColumn::make('title')->searchable()
                 ->sortable(),
                 TextColumn::make('categories.title')->searchable()->label('Category')->sortable(),
-                CheckboxColumn::make('is_published')
-                    ->label('Published')
-                    ->afterStateUpdated(function ($state, $record) {
-                        if ($state) {
-                            // If checked, set published_at to the current date and time
-                            $record->published_at = Carbon::now();
-                        } else {
-                            // If unchecked, set published_at to null
-                            $record->published_at = null;
-                        }
-                        $record->save(); // Save the record
-                    }),
-                TextColumn::make('published_at')->label('Published At')->dateTime()->sortable()->searchable(),
+                ToggleColumn::make('is_published')
+                            ->label('Published')
+                            ->onIcon('heroicon-m-check-circle')
+                            ->offIcon('heroicon-m-x-circle')
+                            ->disabled(fn() => !auth()->user()?->can('publish_any_blog::article'))
+                            ->afterStateUpdated(function ($state, $record) {
+                            if (!auth()->user()->can('publish_any_blog::article')) {
+                                abort(403, 'You are not authorized to update this field.');
+                            }
+
+                            if ($state) {
+                                // If checked, set published_at to the current date and time
+                                $record->published_at = Carbon::now();
+                            } else {
+                                // If unchecked, set published_at to null
+                                $record->published_at = null;
+                            }
+                            $record->save(); // Save the record
+                        }),
+                TextColumn::make('published_at')
+                ->label('Published At')
+                ->dateTime()
+                ->sortable()
+                ->searchable(),
                 // TextColumn::make('brief'),
 
                 ])
@@ -258,6 +273,19 @@ class ArticleResource extends Resource
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish_any'
+        ];
     }
 }
 

@@ -22,7 +22,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Str;
-class TagResource extends Resource
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+class TagResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Tag::class;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
@@ -147,6 +148,19 @@ class TagResource extends Resource
             'index' => Pages\ListTags::route('/'),
             'create' => Pages\CreateTag::route('/create'),
             'edit' => Pages\EditTag::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
         ];
     }
 }

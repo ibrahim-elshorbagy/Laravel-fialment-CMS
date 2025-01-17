@@ -63,7 +63,7 @@ class ArticlePolicy
      */
     public function forceDelete(User $user, Article $article): bool
     {
-        return $user->can('force_delete_blog::article');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class ArticlePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_blog::article');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class ArticlePolicy
      */
     public function restore(User $user, Article $article): bool
     {
-        return $user->can('restore_blog::article');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class ArticlePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_blog::article');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class ArticlePolicy
      */
     public function replicate(User $user, Article $article): bool
     {
-        return $user->can('replicate_blog::article');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,11 @@ class ArticlePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_blog::article');
+        return $user->can('{{ Reorder }}');
+    }
+
+    public function publish(User $user): bool
+    {
+        return $user->can('publish_any_blog::article');
     }
 }
