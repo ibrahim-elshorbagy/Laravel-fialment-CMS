@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Article;
 
 use App\Models\User;
-use Awcodes\Curator\Models\Media;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;

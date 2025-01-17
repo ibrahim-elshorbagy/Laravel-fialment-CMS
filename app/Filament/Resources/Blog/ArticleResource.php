@@ -8,8 +8,6 @@ use App\Forms\Components\slug;
 use App\Models\Article;
 use App\Models\Tag;
 use App\Models\User;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
@@ -36,7 +34,10 @@ use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
 use App\Forms\Components\CustomSEO;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleResource extends Resource
 {
@@ -44,144 +45,160 @@ class ArticleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-
+    public static function getRouteKey(): string
+    {
+        return 'id';
+    }
     public static function form(Form $form): Form
     {
-           return $form
-                    ->schema([
+        return $form
+            ->schema([
+                // Main Content Area
+                Grid::make()->columns(3)->schema([
+                    // Left Sidebar (Main Content)
+                    Grid::make()->columnSpan(2)->schema([
                         Section::make('Content')
                             ->description('Manage the content of this article')
-
                             ->schema([
-                                    TextInput::make('title')
-                                        ->required()
-                                        ->maxLength(150)
-                                        ->minLength(1)
-                                        ->live(onBlur:true)
-                                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
-                                            if (!$state) return;
+                                // Title and Slug
+                                TextInput::make('title')
+                                    ->required()
+                                    ->maxLength(150)
+                                    ->minLength(1)
+                                    ->live(onBlur:true)
+                                    ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                        if (!$state) return;
 
-                                            $slug = preg_replace('/\s+/u', '-', trim($state));
-                                            $slug = str_replace("/", "", $slug);
-                                            $slug = str_replace("?", "", $slug);
-                                            $slug = mb_strtolower($slug, 'UTF-8');
+                                        $slug = preg_replace('/\s+/u', '-', trim($state));
+                                        $slug = str_replace("/", "", $slug);
+                                        $slug = str_replace("?", "", $slug);
+                                        $slug = mb_strtolower($slug, 'UTF-8');
 
-                                            $set('slug', $slug);
-                                        })->prefixIcon('heroicon-m-document-text'),
+                                        $set('slug', $slug);
+                                    })->prefixIcon('heroicon-m-document-text'),
 
-                                    TextInput::make('slug')
-                                        ->required()
-                                        ->unique(ignoreRecord: true)
-                                        ->maxLength(150)
-                                        ->minLength(1)
-                                        ->disabled()
-                                        ->prefixIcon('heroicon-m-link')
-                                        ->helperText('This will be the URL of your content')
-                                        ->dehydrated(),
+                                TextInput::make('slug')
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
+                                    ->maxLength(150)
+                                    ->minLength(1)
+                                    ->disabled()
+                                    ->prefixIcon('heroicon-m-link')
+                                    ->helperText('This will be the URL of your content')
+                                    ->dehydrated(),
 
+                                // Rich Text Editor
                                 RichEditor::make('content')
-                                    ->label('Content')
-                                    ->placeholder('Write your content here...')
+                                    ->label('Article Content')
                                     ->required()
                                     ->columnSpanFull(),
 
+                                // Brief Description
                                 Textarea::make('brief')
-                                    ->label('Brief Description')
-                                    ->placeholder('A short summary of the post')
-                                    ->required()
+                                    ->label('Excerpt')
+                                    ->helperText('This is a short description of the article on the home page Cards.')
                                     ->maxLength(160)
                                     ->columnSpanFull(),
+                            ]),
 
-                                select::make('categories')
-                                    ->relationship('categories', 'title',fn($query)=> $query->limit(10))
+                            // SEO Section (Full Width)
+                                Section::make('SEO')
+                                ->schema([
+                                    CustomSEO::make(['title', 'author', 'description', 'keywords']),
+                                ])
+                    ]),
+
+                    // Right Sidebar
+                    Grid::make()->columnSpan(1)->schema([
+                        // Publishing Status
+                        Section::make('Publish')
+                            ->schema([
+                                Toggle::make('is_published')
+                                    ->label('Published')
+                                    ->default(true),
+
+                                DateTimePicker::make('published_at')
+                                    ->label('Publish Date'),
+
+                                Select::make('user_id')
+                                    ->label('Author')
+                                    ->relationship('user', 'name', fn ($query) => $query->limit(10))
+                                    ->placeholder('Select an author')
                                     ->preload()
-                                    ->label('Categories'),
+                                    ->searchable()
+                                    ->required()
+                                    ->reactive()
+                                    ->prefixIcon('heroicon-m-user')
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state) {
+                                            $userName = \App\Models\User::find($state)->name;
+                                            $set('seo.author', $userName);
+                                        } else {
+                                            $set('seo.author', null);
+                                        }
+                                    })
+                                    ->columnSpanFull(),
 
-                                select::make('tags')
-                                    ->multiple()
-                                    ->relationship('tags', 'title',fn($query)=> $query->limit(10))
-                                    ->preload()
-                                    ->label('Tags'),
+                            ]),
 
-                            ])
-                            ->columns(2),
+                        // Categories and Tags
+                        Section::make('Taxonomy')
+                            ->schema([
+                            select::make('categories')
+                                ->relationship('categories', 'title',fn($query)=> $query->limit(10))
+                                ->preload()
+                                ->label('Categories'),
 
-                            Grid::make()->schema([
-                                // Publishing Status Card
-                                Section::make()
-                                    ->schema([
-                                        Grid::make(2)
-                                            ->schema([
-                                                Toggle::make('is_published')
-                                                    ->label('Publishing Status')
-                                                    ->default(true)
-                                                    ->inline()
-                                                    ->onIcon('heroicon-m-check-circle')
-                                                    ->offIcon('heroicon-m-x-circle'),
+                            select::make('tags')
+                                ->multiple()
+                                ->relationship('tags', 'title',fn($query)=> $query->limit(10))
+                                ->preload()
+                                ->label('Tags'),
+                            ]),
 
-                                                DateTimePicker::make('published_at')
-                                                    ->label('Publish Date')
-                                                    ->displayFormat('M d, Y H:i')
-                                                    ->timezone('UTC')
-                                                    ->prefixIcon('heroicon-m-calendar'),
+                        // Featured Image
+                        Section::make('media')
+                            ->relationship('media')
+                            ->heading('Featured Image')
 
-                                                Select::make('user_id')
-                                                    ->label('Author')
-                                                    ->relationship('user', 'name', fn ($query) => $query->limit(10))
-                                                    ->placeholder('Select an author')
-                                                    ->preload()
-                                                    ->searchable()
-                                                    ->required()
-                                                    ->reactive()
-                                                    ->prefixIcon('heroicon-m-user')
-                                                    ->afterStateUpdated(function ($state, callable $set) {
-                                                        if ($state) {
-                                                            $userName = \App\Models\User::find($state)->name;
-                                                            $set('seo.author', $userName);
-                                                        } else {
-                                                            $set('seo.author', null);
-                                                        }
-                                                    })
-                                                    ->columnSpanFull(),
-                                            ])
-                                    ])
-                                    ->columnSpan(['lg' => 1, 'sm' => 2])
-                                    ->heading('Publishing Information')
-                                    ->description('Control when this content goes live'),
+                                ->schema([
+                                    FileUpload::make('path')
+                                        ->label('Featured Image')
+                                        ->image()
+                                        ->required()
+                                        ->disk('public')
+                                        ->directory(function (Get $get) {
+                                            $userId = $get('../user_id');
+                                            $id = $get('../id');
+                                            return 'blogs/' . $userId . '/article/'. $id;
+                                        })
+                                        ->getUploadedFileNameForStorageUsing(function (UploadedFile $file): string {
+                                            return Str::slug($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
+                                        })
+                                        ->afterStateUpdated(function ($state, $record, $set) {
 
-                                // Media & Author Card
-                                Section::make()
-                                    ->schema([
-                                        Grid::make(1)
-                                            ->schema([
-                                                CuratorPicker::make('media_id')
-                                                    ->label('Featured Image')
-                                                    ->helperText('Select a featured image for this content')
-                                                    ->columnSpanFull(),
+                                            if ($state instanceof UploadedFile && $record?->path) {
+                                                Storage::disk('public')->delete($record->path);
+                                            }
+                                        }),
 
 
-                                            ])
-                                    ])
-                                    ->columnSpan(['lg' => 1, 'sm' => 2])
-                                    ->heading('Media & Authorship')
-                                    ->description('Manage content media and attribution')
-                            ])->columns(2),
-
-                        Section::make('SEO')
-                        ->schema([
-                            CustomSEO::make(['title', 'author', 'description', 'keywords']),
-                        ])->description('Enhance SEO visibility'),
+                                    Textarea::make('alt')
+                                        ->label('Image Alt Text'),
+                                ]),
+                    ]),
+                ]),
 
 
-                    ]);
-
+            ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                CuratorColumn::make('media_id')->size(100)->label('Image'),
+                // CuratorColumn::make('media_id')->size(100)->label('Image'),
                 TextColumn::make('title')->searchable()
                 ->sortable(),
                 TextColumn::make('categories.title')->searchable()->label('Category')->sortable(),
@@ -232,8 +249,12 @@ class ArticleResource extends Resource
         return [
             'index' => Pages\ListArticles::route('/'),
             'create' => Pages\CreateArticle::route('/create'),
-            'edit' => Pages\EditArticle::route('/{record}/edit'),
+            'edit' => Pages\EditArticle::route('/{record:id}/edit'),
         ];
+    }
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }
 

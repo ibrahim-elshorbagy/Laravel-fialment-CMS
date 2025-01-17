@@ -1,8 +1,8 @@
 <article class="flex flex-col gap-4 px-2 py-6 m-5 mx-auto mt-16 m sm:gap-8 sm:py-12 max-w-7xl">
     <!-- Hero Section with Image -->
     <section class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-neutral-800 dark:to-neutral-900">
-        @if ($article->media_id)
-        <img src="{{ Storage::url($article?->image?->path) }}" alt="{{ $article->title }}"
+        @if ($article->media)
+        <img src="{{ Storage::url($article?->media?->path) }}" alt="{{ $article->media?->alt }}"
             class="object-cover w-full h-[24rem] sm:h-[48rem] rounded-lg">
         @else
         <div class="flex items-center justify-center w-full h-32 sm:h-48">
@@ -37,11 +37,19 @@
         <div class="flex flex-wrap gap-3 mb-4 sm:gap-6 sm:mb-8">
             <div class="flex items-center gap-1 sm:gap-2">
                 <span class="text-xs font-semibold sm:text-sm text-neutral-800 dark:text-neutral-100">Categories:</span>
-                <x-classification.category-badge :categories="$article->categories" />
+                @if($article->categories->isNotEmpty())
+                    <x-classification.category-badge :categories="$article->categories" />
+                @else
+                    <span class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">No Categories</span>
+                @endif
             </div>
             <div class="flex items-center gap-1 sm:gap-2">
                 <span class="text-xs font-semibold sm:text-sm text-neutral-800 dark:text-neutral-100">Tags:</span>
-                <x-classification.tag-badge :tags="$article->tags" />
+                @if($article->tags->isNotEmpty())
+                    <x-classification.tag-badge :tags="$article->tags" />
+                @else
+                    <span class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">No Tags</span>
+                @endif
             </div>
         </div>
 
@@ -57,3 +65,17 @@
         <livewire:comments :model="$article" :emojis="['👍', '👎', '❤️', '😂', '😯', '😢', '😡']" />
     </section>
 </article>
+
+@push('scripts')
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": "{{ $article->title ?? '' }}",
+            "author": "{{ $article->user?->name ?? '' }}",
+            "datePublished": "{{ $article->published_at ? (new DateTime($article->published_at))->format('Y-m-d') : '' }}",
+            "image": "{{ $article->image ? asset('images/' . $article->image) : '' }}"
+        }
+    </script>
+@endpush
+

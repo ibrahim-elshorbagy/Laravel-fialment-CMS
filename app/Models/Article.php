@@ -4,12 +4,12 @@ namespace App\Models;
 
 use App\Models\Tag ;
 use App\Models\User;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use WireComments\Traits\Commentable;
+
 
 class Article extends Model
 {
@@ -29,11 +29,11 @@ class Article extends Model
 
     public function getRouteKeyName()
     {
-        return 'slug';
+        return request()->is('dashboard/*') ? 'id' : 'slug';
     }
 
-    public function image(){
-        return $this->belongsTo(Media::class, 'media_id');
+    public function media(){
+        return $this->morphOne(Media::class, 'mediable');
     }
 
     public function user(){

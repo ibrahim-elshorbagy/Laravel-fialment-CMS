@@ -18,7 +18,7 @@
             <div
                 class="flex flex-col h-full overflow-hidden bg-white border border-gray-400 group dark:bg-neutral-900 dark:border-neutral-700">
                 <!-- Article Image -->
-                <img src="{{ Storage::url($article?->image?->path) }}" alt="{{ $article?->image?->alt_text }}"
+                <img src="{{ Storage::url($article?->media?->path) }}" alt="{{ $article?->media?->alt }}"
                     class="object-cover object-center w-full h-[12rem] md:h-[24rem] duration-700 ease-out transition group-hover:scale-105" />
 
                 <!-- Card Content -->

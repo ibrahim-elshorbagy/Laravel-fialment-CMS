@@ -61,15 +61,6 @@ class DashboardPanelProvider extends PanelProvider
             ->SPA()
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->plugins([
-            \Awcodes\Curator\CuratorPlugin::make()
-                    ->label('Media')
-                    ->pluralLabel('Media')
-                    ->navigationIcon('heroicon-o-photo')
-                    ->navigationGroup('Content')
-                    ->navigationSort(3)
-                    ->navigationCountBadge()
-                    ->registerNavigation(true)
-                    ->defaultListView('grid' || 'list'),
 
                 FilamentEditProfilePlugin::make()
                     ->shouldShowAvatarForm()
