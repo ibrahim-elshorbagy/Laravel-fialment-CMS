@@ -41,6 +41,9 @@ use Illuminate\Support\Facades\Storage;
 use Pboivin\FilamentPeek\Tables\Actions\ListPreviewAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Tables\Columns\ToggleColumn;
+use Illuminate\Support\Facades\Gate;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\TernaryFilter;
 
 class ArticleResource extends Resource implements HasShieldPermissions
 {
@@ -134,15 +137,10 @@ class ArticleResource extends Resource implements HasShieldPermissions
                                     ->required()
                                     ->reactive()
                                     ->prefixIcon('heroicon-m-user')
-                                    ->afterStateUpdated(function ($state, callable $set) {
-                                        if ($state) {
-                                            $userName = \App\Models\User::find($state)->name;
-                                            $set('seo.author', $userName);
-                                        } else {
-                                            $set('seo.author', null);
-                                        }
-                                    })
+                                    ->hidden(fn () => !auth()->user()->can('select_author_blog::article'))
+                                    ->default(auth()->id())
                                     ->columnSpanFull(),
+
 
                             ]),
 
@@ -165,12 +163,11 @@ class ArticleResource extends Resource implements HasShieldPermissions
                         Section::make('media')
                             ->relationship('media')
                             ->heading('Featured Image')
-
                                 ->schema([
                                     FileUpload::make('path')
                                         ->label('Featured Image')
                                         ->image()
-                                        ->required()
+                                        // ->required()
                                         ->disk('public')
                                         ->directory(function (Get $get) {
                                             $userId = $get('../user_id');
@@ -201,31 +198,46 @@ class ArticleResource extends Resource implements HasShieldPermissions
 
     public static function table(Table $table): Table
     {
-        return $table
+        return $table->modifyQueryUsing(function ($query) {
+                    $user = auth()->user();
+
+                    if ($user->can('view_all_articles_blog::article')) {
+                        return $query;
+                    }
+
+                    if ($user->can('view_own_articles_blog::article')) {
+                        return $query->where('user_id', $user->id);
+                    }
+
+                    return $query->whereRaw('0 = 1');
+                })
             ->columns([
-                // CuratorColumn::make('media_id')->size(100)->label('Image'),
-                TextColumn::make('title')->searchable()
+                ImageColumn::make('media.path')->size(100)->label('Image'),
+                TextColumn::make('title')
+                ->searchable()
                 ->sortable(),
+
                 TextColumn::make('categories.title')->searchable()->label('Category')->sortable(),
+
                 ToggleColumn::make('is_published')
                             ->label('Published')
                             ->onIcon('heroicon-m-check-circle')
                             ->offIcon('heroicon-m-x-circle')
-                            ->disabled(fn() => !auth()->user()?->can('publish_any_blog::article'))
-                            ->afterStateUpdated(function ($state, $record) {
-                            if (!auth()->user()->can('publish_any_blog::article')) {
-                                abort(403, 'You are not authorized to update this field.');
-                            }
 
-                            if ($state) {
-                                // If checked, set published_at to the current date and time
-                                $record->published_at = Carbon::now();
-                            } else {
-                                // If unchecked, set published_at to null
-                                $record->published_at = null;
-                            }
-                            $record->save(); // Save the record
-                        }),
+                            ->disabled(fn($record) => !Gate::allows('publishAny', $record) && !Gate::allows('viewOwnArticles', $record))
+
+                            ->beforeStateUpdated(function (bool $state, $record) {
+                                if (!Gate::allows('publishAny', $record)) {
+                                    Gate::authorize('viewOwnArticles', $record);
+                                }
+                            })
+
+                            ->afterStateUpdated(function (bool $state, $record) {
+                                $record->published_at = $state ? Carbon::now() : null;
+                                $record->save();
+                            }),
+
+
                 TextColumn::make('published_at')
                 ->label('Published At')
                 ->dateTime()
@@ -235,6 +247,8 @@ class ArticleResource extends Resource implements HasShieldPermissions
 
                 ])
             ->filters([
+                TernaryFilter::make('is_published')
+                ->label('Published'),
                 SelectFilter::make('Category')->relationship('categories', 'title',fn($query)=> $query->limit(10))
                 ->preload()
                 ->searchable(),
@@ -242,6 +256,7 @@ class ArticleResource extends Resource implements HasShieldPermissions
                 ->preload()
                 ->multiple()
                 ->searchable(),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -275,16 +290,20 @@ class ArticleResource extends Resource implements HasShieldPermissions
         return $this->getResource()::getUrl('index');
     }
 
+
     public static function getPermissionPrefixes(): array
     {
         return [
             'view',
             'view_any',
+            'view_own_articles',
             'create',
             'update',
             'delete',
-            'delete_any',
-            'publish_any'
+            'publish_all_articles',
+            'view_all_articles',
+            'select_author'
+
         ];
     }
 }

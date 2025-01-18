@@ -20,11 +20,16 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'a',
             'email' => 'a@a.a',
             'password' => Hash::make('a'),
         ]);
 
+        User::factory()->create([
+            'name' => 'x',
+            'email' => 'x@x.x',
+            'password' => Hash::make('x'),
+        ]);
          $faker = Faker::create();
 
         for ($i = 1; $i <= 6; $i++) {

@@ -64,6 +64,10 @@ class User extends Authenticatable implements HasAvatar
         return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
 
+    public function articles(){
+        return $this->hasMany(Article::class);
+    }
+
     protected static function booted(): void
     {
         if (config('filament-shield.user.enabled', false)) {

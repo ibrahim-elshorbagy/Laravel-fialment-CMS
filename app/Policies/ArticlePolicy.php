@@ -39,7 +39,7 @@ class ArticlePolicy
      */
     public function update(User $user, Article $article): bool
     {
-        return $user->can('update_blog::article');
+        return $user->can('update_blog::article') && ($user->can('view_all_articles_blog::article') || $article->user_id === $user->id);
     }
 
     /**
@@ -47,7 +47,7 @@ class ArticlePolicy
      */
     public function delete(User $user, Article $article): bool
     {
-        return $user->can('delete_blog::article');
+        return $user->can('delete_blog::article') && ($user->can('view_all_articles_blog::article')|| $article->user_id === $user->id);
     }
 
     /**
@@ -106,8 +106,18 @@ class ArticlePolicy
         return $user->can('{{ Reorder }}');
     }
 
-    public function publish(User $user): bool
+    public function viewOwnArticles(User $user, Article $article): bool
     {
-        return $user->can('publish_any_blog::article');
+        return $user->can('view_own_articles_blog::article') && $article->user_id === $user->id;
     }
+    public function publishAny(User $user): bool
+    {
+        return $user->can('publish_all_articles_blog::article');
+    }
+
+    public function selectAuthor(User $user): bool
+    {
+        return $user->can('select_author_blog::article');
+    }
+
 }

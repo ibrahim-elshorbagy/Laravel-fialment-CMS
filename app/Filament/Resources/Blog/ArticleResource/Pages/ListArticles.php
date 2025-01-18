@@ -23,22 +23,22 @@ class ListArticles extends ListRecords
         ];
     }
 
-    public function getTabs(): array
-    {
+    // public function getTabs(): array
+    // {
 
-        return [
-                'All' => Tab::make('All'),
-                'Published' => Tab::make('Published')
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('is_published', true))
-                    ->badge(Article::query()->where('is_published', true)->count()),
+    //     return [
+    //             'All' => Tab::make('All'),
+    //             'Published' => Tab::make('Published')
+    //                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_published', true))
+    //                 ->badge(Article::query()->where('is_published', true)->count()),
 
-                'Darft' => Tab::make('Darft')
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('is_published', false))
-                    ->badge(Article::query()->where('is_published', false)->count()),
+    //             'Darft' => Tab::make('Darft')
+    //                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_published', false))
+    //                 ->badge(Article::query()->where('is_published', false)->count()),
 
-            ];
+    //         ];
 
-    }
+    // }
 
 
     protected function getPreviewModalView(): ?string
