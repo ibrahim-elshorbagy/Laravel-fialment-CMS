@@ -74,7 +74,7 @@
                     <li><a href="{{ route('plans') }}" wire:navigate
                             class="font-medium text-neutral-600 underline-offset-2 hover:text-black focus:outline-none focus:underline dark:text-neutral-300 dark:hover:text-white">Plans</a>
                     </li>
-                    <li><a href="#"
+                    <li><a href="{{ route('articles.list') }}"
                             class="font-medium text-neutral-600 underline-offset-2 hover:text-black focus:outline-none focus:underline dark:text-neutral-300 dark:hover:text-white">Blog</a>
                     </li>
                     <!-- User Pic -->
@@ -89,7 +89,8 @@
                             aria-controls="userMenu">
 
                         @auth
-                       <x-filament::avatar :src="Auth::user()?->avatar_url ? Storage::url(Auth::user()->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()?->name)" :alt="Auth::user()?->name" />
+                        <x-filament::avatar :src="Auth::user()?->getAvatarUrl()" :alt="Auth::user()?->name"
+                                            class="w-8 h-8 sm:w-12 sm:h-12" />
                         @endauth
 
                         @guest

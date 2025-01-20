@@ -64,6 +64,18 @@ class User extends Authenticatable implements HasAvatar
         return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
 
+    public function getAvatarUrl()
+    {
+        // Check if the user has a custom avatar URL
+        if ($this->avatar_url) {
+            return Storage::url($this->avatar_url);
+        }
+
+        // Use UI Avatars as a fallback based on user's name
+        $name = $this->name ?? 'Guest';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name);
+    }
+
     public function articles(){
         return $this->hasMany(Article::class);
     }

@@ -18,7 +18,7 @@
             <div
                 class="flex flex-col h-full overflow-hidden bg-white border border-gray-400 group dark:bg-neutral-900 dark:border-neutral-700">
                 <!-- Article Image -->
-                <img src="{{ Storage::url($article?->media?->path) }}" alt="{{ $article?->media?->alt }}"
+                <img src="{{ $article->getThumbnailUrl() }}" alt="{{ $article?->media?->alt }}"
                     class="object-cover object-center w-full h-[12rem] md:h-[24rem] duration-700 ease-out transition group-hover:scale-105" />
 
                 <!-- Card Content -->
@@ -40,9 +40,8 @@
                     </div>
 
                     <div class="flex items-center mt-auto gap-x-3">
-                        <x-filament::avatar
-                            :src="$article?->user?->avatar_url ? Storage::url($article?->user?->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode($article?->user?->name)"
-                            :alt="Auth::user()?->name" />
+                        <x-filament::avatar :src="$article->user?->getAvatarUrl()" :alt="$article->user->name"
+                            class="w-8 h-8 sm:w-12 sm:h-12" />
                         <div>
                             <h5 class="text-sm text-neutral-800 dark:text-neutral-200">By {{ $article?->user?->name }}
                             </h5>

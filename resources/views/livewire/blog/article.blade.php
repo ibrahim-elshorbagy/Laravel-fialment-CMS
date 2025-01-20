@@ -2,7 +2,7 @@
     <!-- Hero Section with Image -->
     <section class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-neutral-800 dark:to-neutral-900">
         @if ($article->media)
-        <img src="{{ Storage::url($article?->media?->path) }}" alt="{{ $article->media?->alt }}"
+        <img src="{{ $article->getThumbnailUrl() }}" alt="{{ $article->media?->alt }}"
             class="object-cover w-full h-[24rem] sm:h-[48rem] rounded-lg">
         @else
         <div class="flex items-center justify-center w-full h-32 sm:h-48">
@@ -20,9 +20,8 @@
 
         <!-- Author Info -->
         <div class="flex items-center gap-2 mb-4 sm:gap-4 sm:mb-8">
-            <x-filament::avatar
-                :src="$article?->user?->avatar_url ? Storage::url($article?->user?->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()?->name)"
-                :alt="Auth::user()?->name" class="w-8 h-8 sm:w-12 sm:h-12" />
+            <x-filament::avatar :src="$article->user?->getAvatarUrl()" :alt="$article->user->name"
+                class="w-8 h-8 sm:w-12 sm:h-12" />
             <div class="flex flex-col">
                 <span class="text-base font-semibold text-blue-600 sm:text-lg dark:text-blue-400">
                     {{ $article->user->name ?? 'Unknown Author' }}
